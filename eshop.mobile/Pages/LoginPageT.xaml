@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<page:ContentPageBase x:Class="Eshop.Mobile.Pages.LoginPageT"
+                      xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                      xmlns:input="clr-namespace:InputKit.Shared.Controls;assembly=InputKit.Maui"
+                      xmlns:page="clr-namespace:Eshop.Mobile.Pages.Base"
+                      xmlns:validation="clr-namespace:InputKit.Shared.Validations;assembly=InputKit.Maui"
+                      xmlns:vm="clr-namespace:Eshop.Mobile.ViewModels"
+                      Title="LoginPage"
+                      x:DataType="vm:LoginVMt"
+                      Shell.NavBarIsVisible="False"
+                      Shell.TabBarIsVisible="False">
+
+    <ScrollView>
+
+        <VerticalStackLayout>
+
+            <input:FormView x:Name="Form"
+                            Spacing="5"
+                            SubmitCommand="{Binding LoginCommand}">
+
+                <input:AdvancedEntry x:Name="LoginEntry"
+                                     Title="Email"
+                                     FontFamily="Racama"
+                                     Text="{Binding Email}">
+                    <input:AdvancedEntry.Validations>
+                        <validation:RequiredValidation />
+                    </input:AdvancedEntry.Validations>
+                </input:AdvancedEntry>
+
+                <input:AdvancedEntry x:Name="PasswordEntry"
+                                     Title="Пароль"
+                                     FontFamily="Racama"
+                                     IsPassword="True"
+                                     Text="{Binding Password}">
+                    <input:AdvancedEntry.Validations>
+                        <validation:RequiredValidation />
+                    </input:AdvancedEntry.Validations>
+                </input:AdvancedEntry>
+
+                <Button input:FormView.IsSubmitButton="True" Text="Войти" />
+
+            </input:FormView>
+
+        </VerticalStackLayout>
+
+    </ScrollView>
+
+</page:ContentPageBase>

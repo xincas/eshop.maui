@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<pagebase:ContentPageBase x:Class="Eshop.Mobile.Pages.CatalogPage"
+                          xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                          xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                          xmlns:m="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+                          xmlns:mct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                          xmlns:pagebase="clr-namespace:Eshop.Mobile.Pages.Base"
+                          xmlns:vm="clr-namespace:Eshop.Mobile.ViewModels"
+                          x:DataType="vm:CatalogVM"
+                          Shell.NavBarIsVisible="False">
+    <!--  Title="CatalogPage"  -->
+
+
+    <pagebase:ContentPageBase.Resources>
+        <ResourceDictionary>
+            <mct:InvertedBoolConverter x:Key="InverteBool" />
+
+            <Style x:Key="searchStyle" TargetType="SearchBar">
+                <Setter Property="CancelButtonColor" Value="Red" />
+            </Style>
+        </ResourceDictionary>
+    </pagebase:ContentPageBase.Resources>
+
+    <Grid Margin="15"
+          ColumnDefinitions="*"
+          RowDefinitions="auto, *"
+          RowSpacing="30">
+
+        <SearchBar x:Name="search"
+                   Style="{x:StaticResource searchStyle}"
+                   HorizontalOptions="StartAndExpand"
+                   VerticalOptions="CenterAndExpand"
+                   SearchCommand="{Binding PerformSearchCommand}"
+                   SearchCommandParameter="{Binding Text, Source={x:Reference search}}">
+            <SearchBar.Behaviors>
+                <mct:EventToCommandBehavior Command="{Binding StartSearchingCommand}" EventName="Focused" />
+                <mct:EventToCommandBehavior Command="{Binding EndSearchingCommand}" EventName="Unfocused" />
+                <mct:EventToCommandBehavior Command="{Binding PerformSearchCommand}"
+                                            CommandParameter="{Binding Text, Source={x:Reference search}}"
+                                            EventName="TextChanged" />
+            </SearchBar.Behaviors>
+        </SearchBar>
+
+        <ScrollView Grid.Row="1"
+                    HorizontalOptions="Center"
+                    VerticalScrollBarVisibility="Never">
+
+            <VerticalStackLayout mct:StateContainer.CurrentState="{Binding State}">
+                <mct:StateContainer.StateViews>
+
+                    <m:TreeView mct:StateView.StateKey="Default"
+                                ItemsSource="{Binding Nodes}"
+                                Spacing="20">
+                        <m:TreeView.ItemTemplate>
+                            <DataTemplate x:DataType="vm:Node">
+                                <VerticalStackLayout Margin="10,0,0,0">
+                                    <Label FontFamily="Racama"
+                                           FontSize="22"
+                                           Text="{Binding Name}" />
+                                </VerticalStackLayout>
+                            </DataTemplate>
+                        </m:TreeView.ItemTemplate>
+                    </m:TreeView>
+
+                    <CollectionView x:Name="searchResults"
+                                    mct:StateView.StateKey="Searching"
+                                    ItemsSource="{Binding SearchResults}">
+
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout ItemSpacing="15" Orientation="Vertical" />
+                        </CollectionView.ItemsLayout>
+
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="vm:SearhResult">
+                                <Label FontFamily="Racama"
+                                       FontSize="22"
+                                       Text="{Binding Title}" />
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+
+                    </CollectionView>
+
+                </mct:StateContainer.StateViews>
+            </VerticalStackLayout>
+
+        </ScrollView>
+
+        <ActivityIndicator Grid.RowSpan="2"
+                           HeightRequest="50"
+                           IsRunning="{Binding IsBusy}"
+                           ZIndex="1" />
+    </Grid>
+
+</pagebase:ContentPageBase>

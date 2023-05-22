@@ -1,0 +1,264 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<pagebase:ContentPageBase x:Class="Eshop.Mobile.Pages.MainPage"
+                          xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                          xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                          xmlns:converters="clr-namespace:Eshop.Mobile.Converters"
+                          xmlns:mct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                          xmlns:model="clr-namespace:Eshop.Mobile.Models"
+                          xmlns:pagebase="clr-namespace:Eshop.Mobile.Pages.Base"
+                          xmlns:selectors="clr-namespace:Eshop.Mobile.Views.DataTemplateSelectors"
+                          xmlns:sk="clr-namespace:Maui.Skeleton;assembly=Maui.Skeleton"
+                          xmlns:vm="clr-namespace:Eshop.Mobile.ViewModels"
+                          x:DataType="vm:MainVM"
+                          Shell.NavBarIsVisible="False">
+
+    <pagebase:ContentPageBase.Resources>
+        <ResourceDictionary>
+            <mct:InvertedBoolConverter x:Key="BoolInvert" />
+            <converters:PriceToDiscountPrice x:Key="PriceToDiscount" />
+            <converters:CountGreaterThen1ToBool x:Key="CountGreaterThen1" />
+            <converters:TakeFirstItem x:Key="TakeFirstItem" />
+
+            <DataTemplate x:Key="ProductsSingleImage" x:DataType="model:Product">
+                <Frame CornerRadius="20" HasShadow="True">
+                    <Frame.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding Source={x:RelativeSource AncestorType={x:Type vm:MainVM}}, Path=NavigateToProductDetailPageCommand}"
+                                              CommandParameter="{Binding .}"
+                                              NumberOfTapsRequired="1" />
+                    </Frame.GestureRecognizers>
+
+
+                    <Grid ColumnDefinitions="*, auto"
+                          ColumnSpacing="2"
+                          RowDefinitions="*, auto, auto, auto"
+                          RowSpacing="3">
+
+                        <Border Grid.ColumnSpan="2"
+                                HeightRequest="150"
+                                BackgroundColor="Transparent">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="20" />
+                            </Border.StrokeShape>
+                            <Image Aspect="Center" Source="{Binding Images, Converter={StaticResource TakeFirstItem}}" />
+                        </Border>
+
+                        <Label Grid.Row="1"
+                               Grid.ColumnSpan="2"
+                               FontFamily="Racama"
+                               LineBreakMode="WordWrap"
+                               MaxLines="5"
+                               Text="{Binding Name}" />
+                        <Label Grid.Row="2"
+                               Grid.ColumnSpan="2"
+                               FontFamily="Racama"
+                               FontSize="10"
+                               Text="{Binding Price, Converter={x:StaticResource PriceToDiscount}, ConverterParameter=0.1, StringFormat='{0} руб.'}"
+                               TextDecorations="Strikethrough" />
+                        <Label Grid.Row="3"
+                               Grid.ColumnSpan="2"
+                               FontFamily="Racama"
+                               Text="{Binding Price, StringFormat='{0} руб.'}" />
+                    </Grid>
+                </Frame>
+            </DataTemplate>
+
+            <DataTemplate x:Key="ProductsMultipleImages" x:DataType="model:Product">
+                <Frame CornerRadius="20" HasShadow="True">
+                    <Frame.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding Source={x:RelativeSource AncestorType={x:Type vm:MainVM}}, Path=NavigateToProductDetailPageCommand}"
+                                              CommandParameter="{Binding .}"
+                                              NumberOfTapsRequired="1" />
+                    </Frame.GestureRecognizers>
+
+                    <Grid ColumnDefinitions="*, auto"
+                          ColumnSpacing="2"
+                          RowDefinitions="*, auto, auto, auto"
+                          RowSpacing="3">
+
+                        <VerticalStackLayout Grid.ColumnSpan="2"
+                                             HorizontalOptions="Center"
+                                             VerticalOptions="Center"
+                                             Spacing="3">
+
+                            <CarouselView HeightRequest="150"
+                                          IndicatorView="Indicator"
+                                          ItemTemplate="{StaticResource ImageCarousel}"
+                                          ItemsSource="{Binding Images}" />
+
+                            <IndicatorView x:Name="Indicator" HorizontalOptions="Center" />
+
+                        </VerticalStackLayout>
+
+
+                        <Label Grid.Row="1"
+                               Grid.ColumnSpan="2"
+                               FontFamily="Racama"
+                               LineBreakMode="WordWrap"
+                               MaxLines="5"
+                               Text="{Binding Name}" />
+                        <Label Grid.Row="2"
+                               Grid.ColumnSpan="2"
+                               FontFamily="Racama"
+                               FontSize="10"
+                               Text="{Binding Price, Converter={x:StaticResource PriceToDiscount}, ConverterParameter=0.1, StringFormat='{0} руб.'}"
+                               TextDecorations="Strikethrough" />
+                        <Label Grid.Row="3"
+                               Grid.ColumnSpan="2"
+                               FontFamily="Racama"
+                               Text="{Binding Price, StringFormat='{0} руб.'}" />
+                    </Grid>
+                </Frame>
+            </DataTemplate>
+
+            <DataTemplate x:Key="ShimProductsCollection" x:DataType="model:Product">
+                <Frame CornerRadius="20" HasShadow="True">
+                    <Grid ColumnDefinitions="*, auto"
+                          ColumnSpacing="2"
+                          RowDefinitions="*, auto, auto, auto"
+                          RowSpacing="3">
+
+                        <BoxView Grid.ColumnSpan="2"
+                                 HeightRequest="150"
+                                 HorizontalOptions="Center"
+                                 VerticalOptions="Center"
+                                 sk:Skeleton.IsBusy="{Binding Source={RelativeSource AncestorType={x:Type vm:MainVM}}, Path=IsBusy}" />
+
+                        <Label Grid.Row="1"
+                               Grid.ColumnSpan="2"
+                               sk:Skeleton.IsBusy="{Binding Source={RelativeSource AncestorType={x:Type vm:MainVM}}, Path=IsBusy}"
+                               FontFamily="Racama"
+                               LineBreakMode="WordWrap"
+                               MaxLines="5"
+                               Text="{Binding Name}" />
+                        <Label Grid.Row="2"
+                               Grid.ColumnSpan="2"
+                               sk:Skeleton.IsBusy="{Binding Source={RelativeSource AncestorType={x:Type vm:MainVM}}, Path=IsBusy}"
+                               FontFamily="Racama"
+                               FontSize="10"
+                               Text="{Binding Price, Converter={x:StaticResource PriceToDiscount}, ConverterParameter=0.1, StringFormat='{0} руб.'}"
+                               TextDecorations="Strikethrough" />
+                        <Label Grid.Row="3"
+                               Grid.ColumnSpan="2"
+                               sk:Skeleton.IsBusy="{Binding Source={RelativeSource AncestorType={x:Type vm:MainVM}}, Path=IsBusy}"
+                               FontFamily="Racama"
+                               Text="{Binding Price, StringFormat='{0} руб.'}" />
+                    </Grid>
+                </Frame>
+            </DataTemplate>
+
+            <DataTemplate x:Key="ImageCarousel" x:DataType="ImageSource">
+                <Border BackgroundColor="Transparent">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="20" />
+                    </Border.StrokeShape>
+                    <Image Aspect="AspectFill" Source="{Binding .}" />
+                </Border>
+            </DataTemplate>
+
+            <GridItemsLayout x:Key="TwoColumsCollection"
+                             HorizontalItemSpacing="10"
+                             Orientation="Vertical"
+                             Span="2"
+                             VerticalItemSpacing="30" />
+
+            <LinearGradientBrush x:Key="TopBarGradient" StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Offset="0.1" Color="#4D63F5" />
+                <GradientStop Offset="1.0" Color="#8441AA" />
+            </LinearGradientBrush>
+
+            <selectors:ProductsDataTemplateSelector x:Key="ProductsTemplate"
+                                                    MultipleImages="{StaticResource ProductsMultipleImages}"
+                                                    SingleImage="{StaticResource ProductsSingleImage}" />
+
+        </ResourceDictionary>
+    </pagebase:ContentPageBase.Resources>
+
+    <Grid>
+        <RoundRectangle HeightRequest="150"
+                        Margin="-5,0,-5,0"
+                        HorizontalOptions="FillAndExpand"
+                        VerticalOptions="Start"
+                        CornerRadius="25"
+                        Fill="{StaticResource TopBarGradient}"
+                        TranslationY="-85" />
+
+        <Grid Margin="0,10,0,0"
+              ColumnDefinitions="auto, *, auto"
+              RowDefinitions="auto, 1*, 3*">
+
+            <!--#region Header-->
+
+            <Button Padding="20"
+                    HorizontalOptions="Center"
+                    ImageSource="{x:StaticResource FindIcon}"
+                    StyleClass="TextButton" />
+
+            <Label Grid.Column="1"
+                   HorizontalOptions="CenterAndExpand"
+                   VerticalOptions="CenterAndExpand"
+                   HorizontalTextAlignment="Center"
+                   VerticalTextAlignment="End"
+                   FontFamily="Racama"
+                   FontSize="22"
+                   Text="EShop"
+                   TextColor="White" />
+
+            <Button Grid.Column="2"
+                    Padding="20"
+                    ImageSource="{x:StaticResource BellIcon}"
+                    StyleClass="TextButton" />
+            <!--#endregion-->
+
+            <RefreshView Grid.Row="1"
+                         Grid.RowSpan="2"
+                         Grid.ColumnSpan="3"
+                         Margin="10,10,10,0"
+                         Command="{Binding RefreshProductsCommand}"
+                         IsRefreshing="{Binding IsRefreshing}">
+                <ScrollView VerticalScrollBarVisibility="Never">
+                    <VerticalStackLayout>
+
+                        <!--#region Topics-->
+                        <CollectionView Margin="10" HorizontalScrollBarVisibility="Never">
+                            <CollectionView.ItemsLayout>
+                                <LinearItemsLayout ItemSpacing="20" Orientation="Horizontal" />
+                            </CollectionView.ItemsLayout>
+                            <CollectionView.ItemsSource>
+                                <x:Array Type="{x:Type x:String}">
+                                    <x:String>1str</x:String>
+                                    <x:String>2str</x:String>
+                                    <x:String>3str12312123</x:String>
+                                    <x:String>4str</x:String>
+                                    <x:String>5str</x:String>
+                                    <x:String>6str</x:String>
+                                    <x:String>7str</x:String>
+                                </x:Array>
+                            </CollectionView.ItemsSource>
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="x:String">
+                                    <Frame HeightRequest="50"
+                                           Margin="30"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="FillAndExpand"
+                                           BackgroundColor="DarkBlue" />
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                        <!--#endregion-->
+
+
+                        <CollectionView Margin="0,0,0,10"
+                                        ItemTemplate="{StaticResource ProductsTemplate}"
+                                        ItemsLayout="{StaticResource TwoColumsCollection}"
+                                        ItemsSource="{Binding Products}" />
+
+                    </VerticalStackLayout>
+                </ScrollView>
+            </RefreshView>
+
+        </Grid>
+
+    </Grid>
+
+</pagebase:ContentPageBase>

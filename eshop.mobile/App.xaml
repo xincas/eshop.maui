@@ -1,0 +1,99 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<Application x:Class="Eshop.Mobile.App"
+             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:fa="clr-namespace:UraniumUI.Icons.FontAwesome;assembly=UraniumUI.Icons.FontAwesome"
+             xmlns:local="clr-namespace:Eshop.Mobile"
+             xmlns:u="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!--<ResourceDictionary Source="Resources/Styles/Colors.xaml" />-->
+                <u:ColorResource />
+                <!--<ResourceDictionary Source="Resources/Styles/Styles.xaml" />-->
+                <u:StyleResource />
+            </ResourceDictionary.MergedDictionaries>
+
+            <FontImageSource x:Key="MainIcon"
+                             FontFamily="FASolid"
+                             Glyph="{x:Static fa:Solid.House}" />
+
+            <FontImageSource x:Key="CatalogIcon"
+                             FontFamily="FASolid"
+                             Glyph="{x:Static fa:Solid.LinesLeaning}" />
+
+            <FontImageSource x:Key="CartIcon"
+                             FontFamily="FASolid"
+                             Glyph="{x:Static fa:Solid.CartShopping}" />
+
+            <FontImageSource x:Key="HeartRIcon"
+                             FontFamily="FARegular"
+                             Glyph="{x:Static fa:Regular.Heart}" />
+
+            <FontImageSource x:Key="HeartSIcon"
+                             FontFamily="FASolid"
+                             Glyph="{x:Static fa:Solid.Heart}" />
+
+            <FontImageSource x:Key="ProfileIcon"
+                             FontFamily="FARegular"
+                             Glyph="{x:Static fa:Regular.User}" />
+
+            <FontImageSource x:Key="FindIcon"
+                             FontFamily="FASolid"
+                             Glyph="{x:Static fa:Solid.MagnifyingGlass}"
+                             Size="25" />
+
+            <FontImageSource x:Key="ThumbUpSIcon"
+                             FontFamily="FASolid"
+                             Glyph="{x:Static fa:Solid.ThumbsUp}" />
+
+            <FontImageSource x:Key="ThumbUpRIcon"
+                             FontFamily="FARegular"
+                             Glyph="{x:Static fa:Regular.ThumbsUp}" />
+
+            <FontImageSource x:Key="BellIcon"
+                             FontFamily="FARegular"
+                             Glyph="{x:Static fa:Regular.Bell}"
+                             Size="25" />
+
+            <FontImageSource x:Key="PlusIcon"
+                             FontFamily="FASolid"
+                             Glyph="{x:Static fa:Solid.Plus}" />
+
+            <FontImageSource x:Key="MinusIcon"
+                             FontFamily="FASolid"
+                             Glyph="{x:Static fa:Solid.Minus}" />
+
+            <FontImageSource x:Key="LeftArrowIcon"
+                             FontFamily="FASolid"
+                             Glyph="{x:Static fa:Solid.AngleLeft}" />
+
+            <FontImageSource x:Key="RigthArrowIcon"
+                             FontFamily="FASolid"
+                             Glyph="{x:Static fa:Solid.AngleLeft}" />
+
+            <FontImageSource x:Key="DownArrowIcon"
+                             FontFamily="FASolid"
+                             Glyph="{x:Static fa:Solid.AngleDown}" />
+
+            <FontImageSource x:Key="UpArrowIcon"
+                             FontFamily="FASolid"
+                             Glyph="{x:Static fa:Solid.AngleUp}" />
+
+            <FontImageSource x:Key="DotsIcon"
+                             FontFamily="FASolid"
+                             Glyph="{x:Static fa:Solid.Ellipsis}" />
+
+            <FontImageSource x:Key="TrashIcon"
+                             FontFamily="FARegular"
+                             Glyph="{x:Static fa:Regular.TrashCan}" />
+
+            <FontImageSource x:Key="FilterIcon"
+                             FontFamily="FASolid"
+                             Glyph="{x:Static fa:Solid.Filter}" />
+
+
+
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
