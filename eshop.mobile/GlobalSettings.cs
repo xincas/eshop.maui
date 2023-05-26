@@ -2,15 +2,10 @@
 
 public static class GlobalSettings
 {
-    //public const string ServerUrl = "https://inarofuel.beget.app";
-    //public const string ApiUrl = $"{ServerUrl}/api";
-
-
-    public const string ServerUrl = "http://192.168.0.109:1337";
+    public const string ServerUrl = "SERVER_URL";
+    public const string DaDataApiKey = "API_KEY";
     public const string ApiUrl = $"{ServerUrl}/api";
 
-    //public const string ServerUrl = "http://10.0.2.2:1337";
-    //public const string ApiUrl = $"{ServerUrl}/api";
 
     public const string DatabaseFilename = "eshop.db3";
 
