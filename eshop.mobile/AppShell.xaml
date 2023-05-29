@@ -6,10 +6,9 @@
        xmlns:local="clr-namespace:Eshop.Mobile"
        xmlns:pages="clr-namespace:Eshop.Mobile.Pages"
        Shell.FlyoutBehavior="Disabled"
-       Shell.TabBarBackgroundColor="DarkBlue"
-       Shell.TabBarForegroundColor="YellowGreen"
-       Shell.TabBarTitleColor="Green"
-       Shell.TabBarUnselectedColor="Red">
+       Shell.TabBarTitleColor="DarkBlue"
+       Shell.TabBarUnselectedColor="Black">
+
 
     <FlyoutItem>
         <ShellContent Title="Login"
@@ -33,27 +32,27 @@
 
 
     <TabBar>
-        <ShellContent Title="Main"
+        <ShellContent Title="Главная"
                       ContentTemplate="{DataTemplate pages:MainPage}"
                       Icon="{x:StaticResource MainIcon}"
                       Route="MainPage"
                       Shell.FlyoutBehavior="Disabled" />
-        <ShellContent Title="Catalog"
+        <ShellContent Title="Каталог"
                       ContentTemplate="{DataTemplate pages:CatalogPage}"
                       Icon="{x:StaticResource CatalogIcon}"
                       Route="CatalogPage"
                       Shell.FlyoutBehavior="Disabled" />
-        <ShellContent Title="Cart"
+        <ShellContent Title="Корзина"
                       ContentTemplate="{DataTemplate pages:CartPage}"
                       Icon="{x:StaticResource CartIcon}"
                       Route="CartPage"
                       Shell.FlyoutBehavior="Disabled" />
-        <ShellContent Title="Wishlist"
+        <ShellContent Title="Избранное"
                       ContentTemplate="{DataTemplate pages:WishlistPage}"
                       Icon="{x:StaticResource HeartSIcon}"
                       Route="WishlistPage"
                       Shell.FlyoutBehavior="Disabled" />
-        <ShellContent Title="Profile"
+        <ShellContent Title="Профиль"
                       ContentTemplate="{DataTemplate pages:ProfilePage}"
                       Icon="{x:StaticResource ProfileIcon}"
                       Route="ProfilePage"

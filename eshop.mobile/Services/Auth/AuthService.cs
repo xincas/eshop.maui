@@ -13,6 +13,8 @@ using JWT;
 using JWT.Algorithms;
 using JWT.Exceptions;
 using JWT.Serializers;
+using Refit;
+using Sentry.Protocol;
 
 namespace Eshop.Mobile.Services.Auth;
 
@@ -21,6 +23,7 @@ public class AuthService : IAuthService
     private const string _baseUrl = GlobalSettings.ApiUrl;
     private readonly string _loginUrl = $"{_baseUrl}/auth/local";
     private readonly string _refreshUrl = $"{_baseUrl}/token/refresh";
+    private readonly string _registerUrl = $"{_baseUrl}/auth/local/register";
 
     private readonly IJsonSerializer _serializer = new JsonNetSerializer();
     private readonly IDateTimeProvider _provider = new UtcDateTimeProvider();
@@ -30,18 +33,24 @@ public class AuthService : IAuthService
     private readonly IDialogService _dialog;
     private readonly INavigationService _navigation;
     private readonly ISettingsService _settings;
+    private readonly IProfileApi _profileApi;
 
     private readonly HttpClient _httpClient;
-    //private readonly IRequestProvider _requestProvider;
+
+    private HttpClientHandler httpClientHandler = new HttpClientHandler();
 
     public AuthService(INavigationService navigation, ISettingsService settings, IDialogService dialog)
     {
         _navigation = navigation;
         _settings = settings;
-        //_requestProvider = request;
         _dialog = dialog;
-
-        _httpClient = new HttpClient();
+        httpClientHandler.CookieContainer = new();
+        _httpClient = new HttpClient(httpClientHandler);
+        _profileApi = RestService.For<IProfileApi>(GlobalSettings.ApiUrl,
+            new RefitSettings()
+            {
+                AuthorizationHeaderValueGetter = () => GetAccessTokenAsync()
+            });
     }
 
     public bool ValidateAccessToken(string accessToken)
@@ -72,14 +81,15 @@ public class AuthService : IAuthService
     {
         try
         {
-            //var refreshToken = new RefreshToken(_settings.AuthRefreshToken);
+            httpClientHandler.CookieContainer = new();
             var refreshToken = new RefreshToken(await _settings.GetRefreshTokenAsync());
 
             var jsonContent = JsonContent.Create(refreshToken, options: RequestProvider.RequestProvider.JsonOptions);
 
-            var response = await _httpClient.PostAsync(new Uri(_refreshUrl), jsonContent);
+            httpClientHandler.CookieContainer.Add(new Uri(_baseUrl),
+                new Cookie("refreshToken", $"{refreshToken.Refresh}"));
 
-            //var response = await _requestProvider.PostAsync<RefreshToken, RefreshTokenDto>(_refreshUrl, refreshToken);
+            var response = await _httpClient.PostAsync(new Uri(_refreshUrl), jsonContent);
 
             if (response.StatusCode != HttpStatusCode.OK) return false;
 
@@ -88,9 +98,6 @@ public class AuthService : IAuthService
             _settings.SaveAccessToken(data!.Jwt);
             _settings.SaveRefreshToken(data!.RefreshToken);
 
-            /*_settings.AuthAccessToken = response.Jwt;
-            _settings.AuthRefreshToken = response.RefreshToken;*/
-
             return true;
         }
         catch (Exception e)
@@ -98,6 +105,32 @@ public class AuthService : IAuthService
             Debug.WriteLine(e.Message);
             return false;
         }
+    }
+
+    public Task<User> GetMeAsync()
+    {
+        try
+        {
+            return _profileApi.GetProfileAsync();
+        }
+        catch (Exception e)
+        {
+            Debug.WriteLine(e.Message, "AuthService");
+            return null;
+        }
+    }
+
+    public async Task<string> GetAccessTokenAsync()
+    {
+        var token = _settings.GetAccessToken();
+
+        if (!ValidateAccessToken(token))
+        {
+            await RefreshAccessTokenAsync();
+            return _settings.GetAccessToken();
+        }
+
+        return token;
     }
 
     public async Task<bool> LoginAsync(UserCredentials user)
@@ -109,21 +142,15 @@ public class AuthService : IAuthService
 
             if (response.StatusCode != HttpStatusCode.OK) return false;
 
-            //var responseDto = await _requestProvider.PostAsync<UserCredentials, LoginDto>(_loginUrl, user, cookies: cookies);
-
-            //if (responseDto is null) throw new ArgumentNullException(nameof(responseDto));
-
             string refreshToken = response.Headers.GetValues("Set-Cookie")
                 .FirstOrDefault(it => it.StartsWith("refreshToken"))!;
             refreshToken = refreshToken.Split("=")[1].Split(";")[0];
 
             var data = await response.Content.ReadFromJsonAsync<LoginDto>();
 
+            _settings.ClientId = data!.User.Id;
             _settings.SaveAccessToken(data!.Jwt);
             _settings.SaveRefreshToken(refreshToken);
-
-            //_settings.AuthAccessToken = responseDto.Jwt;
-            //_settings.AuthRefreshToken = cookies.GetCookies(new Uri(_loginUrl)).FirstOrDefault(it => it.Name == "refreshToken")?.Value!;
         }
         catch (Exception e)
         {
@@ -133,6 +160,25 @@ public class AuthService : IAuthService
         }
 
         return true;
+    }
+
+    public async Task<AuthResponse> RegisterNewAcc(RegisterModel user)
+    {
+        try
+        {
+            var jsonContent = JsonContent.Create(user, options: RequestProvider.RequestProvider.JsonOptions);
+            var response = await _httpClient.PostAsync(new Uri(_registerUrl), jsonContent);
+
+            if (response.StatusCode != HttpStatusCode.OK)
+                return new AuthResponse() { IsSuccess = false, Message = response.Content.ToString() };
+
+            return new AuthResponse() { IsSuccess = true, Message = response.Content.ToString() };
+        }
+        catch (Exception e)
+        {
+            Debug.WriteLine(e, "AuthService");
+            return new AuthResponse() { IsSuccess = false, Message = e.ToString() };
+        }
     }
 
     public async Task NavigateToLoginPageAsync()

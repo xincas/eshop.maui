@@ -3,15 +3,141 @@
                       xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                       xmlns:base="clr-namespace:Eshop.Mobile.Pages.Base"
+                      xmlns:converters="clr-namespace:Eshop.Mobile.Converters"
                       xmlns:mct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                      xmlns:models="clr-namespace:Eshop.Mobile.Models"
                       xmlns:vm="clr-namespace:Eshop.Mobile.ViewModels"
                       x:DataType="vm:ProfileVM"
                       Shell.NavBarIsVisible="False">
-    <VerticalStackLayout Spacing="20">
-        <Label HorizontalOptions="Center"
-               VerticalOptions="Center"
-               Text="Welcome to profile page" />
 
-        <Button Command="{Binding LogOutCommand}" Text="Logout" />
-    </VerticalStackLayout>
+    <base:ContentPageBase.Resources>
+        <ResourceDictionary>
+            <LinearGradientBrush x:Key="TopBarGradient" StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Offset="0.1" Color="#4D63F5" />
+                <GradientStop Offset="1.0" Color="#8441AA" />
+            </LinearGradientBrush>
+
+            <converters:OrderStatusToText x:Key="OrderToText" />
+
+            <DataTemplate x:Key="OrderTemplate" x:DataType="models:Order">
+                <Frame Padding="10" CornerRadius="20">
+                    <Frame.GestureRecognizers>
+                        <TapGestureRecognizer />
+                    </Frame.GestureRecognizers>
+                    <VerticalStackLayout Spacing="10">
+                        <Label Grid.ColumnSpan="2"
+                               HorizontalOptions="Center"
+                               FontFamily="Racama"
+                               FontSize="18"
+                               Text="{Binding Id, StringFormat='Заказ номер {0}'}" />
+                        <Label Grid.Row="1"
+                               HorizontalOptions="Center"
+                               FontFamily="Racama"
+                               Text="{Binding Status, Converter={StaticResource OrderToText}}" />
+                        <Label HorizontalOptions="End"
+                               FontFamily="Racama"
+                               Text="{Binding Total, StringFormat='{0} руб.'}" />
+                    </VerticalStackLayout>
+                </Frame>
+            </DataTemplate>
+
+            <GridItemsLayout x:Key="ItemLayout"
+                             HorizontalItemSpacing="10"
+                             Orientation="Vertical"
+                             Span="2"
+                             VerticalItemSpacing="10" />
+
+        </ResourceDictionary>
+    </base:ContentPageBase.Resources>
+
+    <Grid>
+        <RoundRectangle HeightRequest="150"
+                        Margin="-5,0,-5,0"
+                        HorizontalOptions="FillAndExpand"
+                        VerticalOptions="Start"
+                        CornerRadius="25"
+                        Fill="{StaticResource TopBarGradient}"
+                        TranslationY="-85" />
+
+        <Grid Margin="0,10,0,0"
+              ColumnDefinitions="auto, *, auto"
+              RowDefinitions="auto, *">
+
+            <!--#region Header-->
+
+            <!--<Button Padding="20"
+                    HorizontalOptions="Center"
+                    ImageSource="{x:StaticResource FindIcon}"
+                    StyleClass="TextButton" />-->
+
+            <Label Grid.ColumnSpan="3"
+                   Padding="9"
+                   HorizontalOptions="CenterAndExpand"
+                   VerticalOptions="CenterAndExpand"
+                   HorizontalTextAlignment="Center"
+                   VerticalTextAlignment="End"
+                   FontFamily="Racama"
+                   FontSize="22"
+                   Text="EShop"
+                   TextColor="White" />
+
+            <!--<Button Grid.Column="2"
+                    Padding="20"
+                    ImageSource="{x:StaticResource BellIcon}"
+                    StyleClass="TextButton" />-->
+            <!--#endregion-->
+
+            <Grid Grid.Row="1"
+                  Grid.ColumnSpan="3"
+                  Margin="10,10,10,0"
+                  RowDefinitions="*,2*">
+
+                <Grid ColumnDefinitions="*,2*"
+                      ColumnSpacing="20"
+                      RowDefinitions="2*,*">
+                    <Border Grid.ColumnSpan="2"
+                            BackgroundColor="Azure"
+                            StrokeShape="RoundRectangle 20" />
+                    <Image Scale="0.6" Source="{StaticResource ProfileIcon}">
+                        <Image.Behaviors>
+                            <mct:IconTintColorBehavior TintColor="DarkBlue" />
+                        </Image.Behaviors>
+                    </Image>
+                    <VerticalStackLayout Grid.Column="1"
+                                         VerticalOptions="Center"
+                                         Spacing="20">
+                        <Label FontSize="20" Text="{Binding User.name, StringFormat='Здравствуйте, {0}'}" />
+                        <Label FontSize="18" Text="{Binding User.phone, StringFormat='Ваш номер, {0}'}" />
+                    </VerticalStackLayout>
+
+                    <Label Grid.Row="1"
+                           Margin="20,0,0,20"
+                           VerticalOptions="End"
+                           FontSize="25"
+                           Text="Заказы" />
+                </Grid>
+
+                <ScrollView Grid.Row="1">
+                    <VerticalStackLayout Margin="0,0,0,70">
+                        <CollectionView ItemTemplate="{StaticResource OrderTemplate}"
+                                        ItemsLayout="{StaticResource ItemLayout}"
+                                        ItemsSource="{Binding Orders}" />
+                    </VerticalStackLayout>
+                </ScrollView>
+
+                <Button Grid.Row="1"
+                        Margin="20"
+                        VerticalOptions="End"
+                        Command="{Binding LogOutCommand}"
+                        FontFamily="Racama"
+                        FontSize="18"
+                        Text="Выйти из аккаунта" />
+            </Grid>
+
+
+
+        </Grid>
+    </Grid>
+
+
 </base:ContentPageBase>

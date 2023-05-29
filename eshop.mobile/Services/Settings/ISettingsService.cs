@@ -4,7 +4,7 @@ public interface ISettingsService
 {
     /*string AuthAccessToken { get; set; }
     string AuthRefreshToken { get; set; }*/
-    string ClientId { get; set; }
+    long ClientId { get; set; }
     string Latitude { get; set; }
     string Longitude { get; set; }
     bool AllowGpsLocation { get; set; }

@@ -3,6 +3,7 @@ using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Eshop.Mobile.Models;
+using Eshop.Mobile.Pages;
 using Eshop.Mobile.Services.Navigation;
 using Eshop.Mobile.Services.Wish;
 using Eshop.Mobile.ViewModels.Base;
@@ -15,12 +16,13 @@ public partial class WishVM : ViewModelBase
     private readonly IWishService _wishService;
 
     private ObservableCollection<Product> _wishes;
-
     public IReadOnlyList<Product> Wishes => _wishes;
 
+    [ObservableProperty] private bool _isFiltred;
     [ObservableProperty] private bool _isAvailbleFilter;
     [ObservableProperty] private double _maxPriceFilter;
     [ObservableProperty] private double _maxPossiblePrice;
+    [ObservableProperty] private bool _isRefreshing;
 
     public WishVM(INavigationService navigationService, IWishService wishService) : base(navigationService)
     {
@@ -30,11 +32,11 @@ public partial class WishVM : ViewModelBase
     }
 
     [RelayCommand]
-    public async void ApplyFilter()
+    public Task ApplyFilter()
     {
-        await IsBusyFor(() =>
+        return IsBusyFor(async () =>
         {
-            var wishList = _wishes.ToList();
+            var wishList = await _wishService.GetWishesAsync();
 
             _wishes.Clear();
 
@@ -45,38 +47,56 @@ public partial class WishVM : ViewModelBase
                 _wishes.Add(product);
             }
 
-            return Task.CompletedTask;
+            IsFiltred = true;
         });
     }
 
     [RelayCommand]
     public async void ResetFilter()
     {
-        IsAvailbleFilter = false;
-        MaxPriceFilter = MaxPossiblePrice;
-        await InitializeAsync();
+        await IsBusyFor(async () =>
+        {
+            IsAvailbleFilter = false;
+            MaxPriceFilter = MaxPossiblePrice;
+            await InitializeAsync();
+            IsFiltred = false;
+        });
+    }
+
+    [RelayCommand]
+    public async void RefreshWishes()
+    {
+        await IsBusyFor(() =>
+        {
+            if (IsFiltred)
+                ApplyFilter();
+            else
+                ResetFilter();
+
+            return Task.CompletedTask;
+        });
+        IsRefreshing = false;
+    }
+
+    [RelayCommand]
+    private async void DeleteWish(Product product)
+    {
+        await _wishService.DeleteProductFromWishesAsync(product);
+        _wishes.Remove(product);
+    }
+
+    [RelayCommand]
+    private async void NavigateToProductDetailPage(Product product)
+    {
+        await NavigationService.NavigateToAsync(nameof(ProductDetailsPageT), new Dictionary<string, object>()
+        {
+            { "product", product }
+        });
     }
 
     public override async Task InitializeAsync()
     {
         var wishes = await _wishService.GetWishesAsync();
-
-        if (!wishes.Any())
-        {
-            var wish = new List<Product>()
-            {
-                new Product(17, "123", String.Empty, false, false, String.Empty, 0, 50, new List<AttributeList>(),
-                    new List<Review>(), new List<ImageSource>()),
-                new Product(5, "123456", String.Empty, false, false, String.Empty, 0, 100, new List<AttributeList>(),
-                    new List<Review>(), new List<ImageSource>()),
-                new Product(9, "123456789", String.Empty, false, false, String.Empty, 0, 150, new List<AttributeList>(),
-                    new List<Review>(), new List<ImageSource>()),
-            };
-
-            var tasks = wish.Select(_wishService.AddProductToWishesAsync);
-
-            await Task.WhenAll(tasks);
-        }
 
         _wishes.Clear();
         decimal max = 0;

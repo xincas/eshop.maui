@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
-using CommunityToolkit.Maui.Converters;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Eshop.Mobile.Models;
@@ -8,6 +7,7 @@ using Eshop.Mobile.Pages;
 using Eshop.Mobile.Services.Catalog;
 using Eshop.Mobile.Services.Navigation;
 using Eshop.Mobile.ViewModels.Base;
+using Sentry;
 
 namespace Eshop.Mobile.ViewModels;
 
@@ -32,11 +32,8 @@ public partial class MainVM : ViewModelBase
     [RelayCommand]
     public async void RefreshProducts()
     {
-        IsRefreshing = true;
-
-        await IsBusyFor(() =>
+        /*await IsBusyFor(() =>
         {
-            Debug.WriteLineIf(MainThread.IsMainThread, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
             _products.Clear();
 
             foreach (var product in Shims.ProductShim.Products)
@@ -45,24 +42,9 @@ public partial class MainVM : ViewModelBase
             }
 
             return Task.CompletedTask;
-        });
+        });*/
 
-        await IsBusyFor(async () =>
-        {
-            Debug.WriteLineIf(MainThread.IsMainThread, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-            _products.Clear();
-
-            var products = await _catalogService.GetProductsAsync();
-
-            if (products == null) return;
-
-
-            foreach (var product in products)
-            {
-                Debug.WriteLine(product);
-                _products.Add(product);
-            }
-        });
+        await IsBusyFor(InitializeAsync);
 
         IsRefreshing = false;
     }
@@ -85,7 +67,7 @@ public partial class MainVM : ViewModelBase
 
         foreach (var product in products)
         {
-            Debug.WriteLine(product);
+            Debug.WriteLine($"Product id:{product.Id} is loaded", "MainViewModel");
             _products.Add(product);
         }
     }

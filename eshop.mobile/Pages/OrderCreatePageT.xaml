@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<page:ContentPageBase x:Class="Eshop.Mobile.Pages.OrderCreatePageT"
+                      xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                      xmlns:converters="clr-namespace:Eshop.Mobile.Converters"
+                      xmlns:fa="clr-namespace:UraniumUI.Icons.FontAwesome;assembly=UraniumUI.Icons.FontAwesome"
+                      xmlns:mct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                      xmlns:models="clr-namespace:Eshop.Mobile.Models"
+                      xmlns:page="clr-namespace:Eshop.Mobile.Pages.Base"
+                      xmlns:selectors="clr-namespace:Eshop.Mobile.Views.DataTemplateSelectors"
+                      xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
+                      xmlns:views="clr-namespace:Eshop.Mobile.Views"
+                      xmlns:vm="clr-namespace:Eshop.Mobile.ViewModels"
+                      Title="OrderCreatePageT"
+                      x:DataType="vm:OrderCreateVMt"
+                      Shell.NavBarIsVisible="False"
+                      Shell.TabBarIsVisible="False">
+
+    <page:ContentPageBase.Resources>
+        <ResourceDictionary>
+
+            <converters:TakeFirstItem x:Key="FirstItem" />
+
+            <mct:InvertedBoolConverter x:Key="Invert"/>
+
+            <DataTemplate x:Key="Prods" x:DataType="models:Product">
+                <Frame Padding="0"
+                       BackgroundColor="AliceBlue"
+                       CornerRadius="20">
+                    <Grid ColumnDefinitions="*,3*,*" ColumnSpacing="15">
+                        <Border BackgroundColor="Transparent" StrokeShape="RoundRectangle 0 0 0 20">
+                            <Image Grid.RowSpan="3"
+                                   HeightRequest="75"
+                                   Aspect="AspectFit"
+                                   Source="{Binding Images, Converter={StaticResource FirstItem}}" />
+                        </Border>
+
+                        <Label Grid.Column="1"
+                               VerticalOptions="Center"
+                               FontFamily="Racama"
+                               FontSize="18"
+                               Text="{Binding Name}" />
+                        <Border Grid.Row="1"
+                                Grid.Column="3"
+                                BackgroundColor="#85b6ff"
+                                StrokeShape="RoundRectangle 20 0 0 0">
+                            <Label Margin="0,0,28,0"
+                                   HorizontalOptions="End"
+                                   VerticalOptions="Center"
+                                   FontSize="22"
+                                   Text="{Binding Quantity, StringFormat='{0}'}" />
+                        </Border>
+
+                    </Grid>
+                </Frame>
+            </DataTemplate>
+
+            <DataTemplate x:Key="SearchResult" x:DataType="x:String">
+                <uranium:StatefulContentView>
+                    <Border Padding="10"
+                            BackgroundColor="AliceBlue"
+                            StrokeShape="RoundRectangle 10">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:OrderCreateVMt}}, Path=AddressSelectCommand}" CommandParameter="{Binding .}" />
+                        </Border.GestureRecognizers>
+                        <Label FontFamily="Racama"
+                               FontSize="15"
+                               Text="{Binding .}" />
+                    </Border>
+                </uranium:StatefulContentView>
+            </DataTemplate>
+
+            <LinearGradientBrush x:Key="TopBarGradient" StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Offset="0.1" Color="#4D63F5" />
+                <GradientStop Offset="1.0" Color="#8441AA" />
+            </LinearGradientBrush>
+
+            <LinearItemsLayout x:Key="ItemLayout"
+                               ItemSpacing="10"
+                               Orientation="Vertical" />
+        </ResourceDictionary>
+    </page:ContentPageBase.Resources>
+
+    <Grid>
+        <RoundRectangle HeightRequest="150"
+                        Margin="-5,0,-5,0"
+                        HorizontalOptions="FillAndExpand"
+                        VerticalOptions="Start"
+                        CornerRadius="25"
+                        Fill="{StaticResource TopBarGradient}"
+                        TranslationY="-85" />
+
+
+        <Grid Margin="0,0,0,0"
+              BackgroundColor="Transparent"
+              ColumnDefinitions="auto, *, auto"
+              RowDefinitions="0.07*, 0.8*, auto">
+
+            <!--#region Header-->
+
+            <!--<Button HorizontalOptions="Center"
+                    ImageSource="{x:StaticResource FindIcon}"
+                    StyleClass="TextButton" />-->
+
+            <Label Grid.Column="1"
+                   Margin="0,20,0,0"
+                   HorizontalOptions="CenterAndExpand"
+                   VerticalOptions="CenterAndExpand"
+                   HorizontalTextAlignment="Center"
+                   VerticalTextAlignment="End"
+                   FontFamily="Racama"
+                   FontSize="22"
+                   Text="Новый заказ"
+                   TextColor="White" />
+
+            <!--<Button Grid.Column="2"
+                    Style="{StaticResource HeartButton}"
+                    Command="{Binding ToggleWishStatusCommand}"
+                    StyleClass="TextButton" />-->
+            <!--#endregion-->
+
+
+            <ScrollView Grid.Row="1"
+                        Grid.RowSpan="2"
+                        Grid.ColumnSpan="3"
+                        Margin="10,20,10,0"
+                        Padding="0,0,0,150"
+                        VerticalScrollBarVisibility="Never">
+                <VerticalStackLayout Spacing="20">
+                    <Grid ColumnDefinitions="*,4*" RowDefinitions="auto,*">
+                        <Label HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               Text="Адрес:" />
+                        <Border Grid.Column="1"
+                                Stroke="Pink"
+                                StrokeShape="RoundRectangle 10"
+                                StrokeThickness="2">
+                            <Entry x:Name="address" Text="{Binding Address}">
+                                <Entry.Behaviors>
+                                    <!--<mct:EventToCommandBehavior Command="{Binding StartSearchingCommand}" EventName="Focused" />
+                                <mct:EventToCommandBehavior Command="{Binding EndSearchingCommand}" EventName="Unfocused" />-->
+                                    <mct:EventToCommandBehavior Command="{Binding AddressSuggestCommand}"
+                                                                CommandParameter="{Binding Text, Source={x:Reference address}}"
+                                                                EventName="TextChanged" />
+                                </Entry.Behaviors>
+                            </Entry>
+                        </Border>
+
+                        <CollectionView Grid.Row="1"
+                                        Grid.Column="1"
+                                        ItemTemplate="{StaticResource SearchResult}"
+                                        ItemsSource="{Binding SearchResults}" />
+                    </Grid>
+                    <CollectionView ItemTemplate="{StaticResource Prods}"
+                                    ItemsLayout="{StaticResource ItemLayout}"
+                                    ItemsSource="{Binding Products}" />
+
+
+                </VerticalStackLayout>
+            </ScrollView>
+
+            <Border Grid.Row="2"
+                    Grid.ColumnSpan="3"
+                    Margin="10,10,10,20"
+                    BackgroundColor="AliceBlue"
+                    StrokeShape="RoundRectangle 20">
+                <Grid ColumnDefinitions="*,1.5*">
+                    <Label HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           Text="{Binding Total, StringFormat='{0} руб.'}" />
+                    <Button Grid.Column="1"
+                            Command="{Binding CreateOrderCommand}"
+                            IsEnabled="{Binding IsBusy, Converter={StaticResource Invert}}"
+                            Text="Сделать заказ" />
+                </Grid>
+            </Border>
+
+        </Grid>
+    </Grid>
+</page:ContentPageBase>

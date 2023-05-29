@@ -216,7 +216,7 @@ public class RequestProvider : IRequestProvider
             if (response.StatusCode is HttpStatusCode.Forbidden or HttpStatusCode.Unauthorized)
             {
                 //throw new AuthenticationException(content);
-                _auth.NavigateToLoginPageAsync();
+                await _auth.NavigateToLoginPageAsync();
             }
 
             throw new HttpRequestException($"Status code:{response.StatusCode}\nContent:{content}");

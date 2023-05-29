@@ -11,17 +11,25 @@
                       x:DataType="vm:LoginVMt"
                       Shell.NavBarIsVisible="False"
                       Shell.TabBarIsVisible="False">
+    <Grid>
 
-    <ScrollView>
+        <Image x:Name="back"
+               Aspect="Center"
+               Opacity="0.1"
+               Scale="1.2"
+               Source="background.jpg" />
 
-        <VerticalStackLayout>
+        <VerticalStackLayout HorizontalOptions="Center"
+                             VerticalOptions="Center"
+                             Spacing="20">
 
             <input:FormView x:Name="Form"
                             Spacing="5"
                             SubmitCommand="{Binding LoginCommand}">
 
                 <input:AdvancedEntry x:Name="LoginEntry"
-                                     Title="Email"
+                                     Title="Телефон"
+                                     WidthRequest="250"
                                      FontFamily="Racama"
                                      Text="{Binding Email}">
                     <input:AdvancedEntry.Validations>
@@ -39,12 +47,21 @@
                     </input:AdvancedEntry.Validations>
                 </input:AdvancedEntry>
 
-                <Button input:FormView.IsSubmitButton="True" Text="Войти" />
+                <Button Margin="0,10,0,0"
+                        input:FormView.IsSubmitButton="True"
+                        FontFamily="Racama"
+                        FontSize="16"
+                        Text="Войти" />
 
             </input:FormView>
 
+            <Button Command="{Binding ToRegistrationPageCommand}"
+                    FontFamily="Racama"
+                    FontSize="16"
+                    Text="Регистрация" />
+
         </VerticalStackLayout>
 
-    </ScrollView>
+    </Grid>
 
 </page:ContentPageBase>

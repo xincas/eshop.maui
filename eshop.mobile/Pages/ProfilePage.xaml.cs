@@ -10,4 +10,10 @@ public partial class ProfilePage : ContentPageBase
         InitializeComponent();
         BindingContext = vm;
     }
+
+    protected async override void OnNavigatedTo(NavigatedToEventArgs args)
+    {
+        base.OnNavigatedTo(args);
+        //await ((ProfileVM)BindingContext).InitializeAsync();
+    }
 }

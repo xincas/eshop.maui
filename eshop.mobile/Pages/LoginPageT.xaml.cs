@@ -11,33 +11,28 @@ public partial class LoginPageT : ContentPageBase
         InitializeComponent();
 
         BindingContext = vm;
+    }
 
-        //Unloaded += async (sender, args) => await ((LoginVMt)BindingContext).InitializeAsync();
+    private void RotateBackground(CancellationToken token)
+    {
+        Task.Run(async () =>
+        {
+            while (true)
+            {
+                await back.RotateTo(360, 100000, Easing.Linear);
+                back.Rotation = 0;
+            }
+        }, token);
     }
 
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-
-        //BindingContext = Handler.MauiContext.Services.GetService(typeof(LoginVMt));
-
         await ((LoginVMt)BindingContext).InitializeAsync();
     }
 
     protected override void OnDisappearing()
     {
         base.OnDisappearing();
-
-        //BindingContext = Handler.MauiContext.Services.GetService(typeof(LoginVMt));
     }
-    /*protected override async void OnAppearing()
-    {
-        base.OnAppearing();
-
-        var vm = BindingContext as LoginVM;
-
-        if (vm is null) return;
-
-        await vm.InitializeAsync();
-    }*/
 }

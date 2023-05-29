@@ -27,8 +27,8 @@ public class NavigationService : INavigationService
         var shellNavigation = new ShellNavigationState(route);
 
         return routeParams is not null
-            ? Shell.Current.GoToAsync(shellNavigation, routeParams)
-            : Shell.Current.GoToAsync(shellNavigation);
+            ? Shell.Current.GoToAsync(shellNavigation, false, routeParams)
+            : Shell.Current.GoToAsync(shellNavigation, false);
     }
 
 

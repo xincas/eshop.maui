@@ -40,6 +40,9 @@ public partial class LoginVMt : ViewModelBase
         });
     }
 
+    [RelayCommand]
+    async void ToRegistrationPage() => await NavigationService.NavigateToAsync(nameof(RegistrationPageT));
+
     public override Task InitializeAsync()
     {
         Email = null;

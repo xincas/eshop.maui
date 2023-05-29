@@ -86,8 +86,19 @@ public class CatalogService : ICatalogService
         var data = await _requestProvider.GetAsync<BaseListResponse<ProductDto>>(uri.ToString());*/
 
         var data = subCategoryId == -1
-            ? await _api.GetProductsAsync(categoryId)
+            ? await _api.GetProductsOfCategoryAsync(categoryId)
             : await _api.GetProductsAsync(categoryId, subCategoryId);
+
+        if (data is null) return Enumerable.Empty<Product>();
+
+        var result = data.ToDomain(it => it.ToProduct());
+
+        return result;
+    }
+
+    public async Task<IEnumerable<Product>> GetProductsOfSubCategoryAsync(long subCategoryId)
+    {
+        var data = await _api.GetProductsOfSubCategoryAsync(subCategoryId);
 
         if (data is null) return Enumerable.Empty<Product>();
 
@@ -172,6 +183,22 @@ public class CatalogService : ICatalogService
         //var data = await _requestProvider.GetAsync<BaseListResponse<ProductDto>>(uri.ToString());
 
         var data = await _api.FindProductsByNameAsync(name);
+
+        if (data is null) return Enumerable.Empty<Product>();
+
+        var result = data.ToDomain(it => it.ToProduct());
+
+        return result;
+    }
+
+    public async Task<IEnumerable<Product>> FindProductsByNameAsync(string name, long categoryId = -1,
+        long subCategoryId = -1)
+    {
+        var data = categoryId != -1
+            ? await _api.FindCategoryProductsByNameAsync(categoryId, name)
+            : subCategoryId != -1
+                ? await _api.FindSubCategoryProductsByNameAsync(subCategoryId, name)
+                : await _api.FindProductsByNameAsync(name);
 
         if (data is null) return Enumerable.Empty<Product>();
 

@@ -3,9 +3,12 @@
                       xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
                       xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
                       xmlns:converters="clr-namespace:Eshop.Mobile.Converters"
+                      xmlns:fa="clr-namespace:UraniumUI.Icons.FontAwesome;assembly=UraniumUI.Icons.FontAwesome"
+                      xmlns:mct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
                       xmlns:models="clr-namespace:Eshop.Mobile.Models"
                       xmlns:page="clr-namespace:Eshop.Mobile.Pages.Base"
                       xmlns:selectors="clr-namespace:Eshop.Mobile.Views.DataTemplateSelectors"
+                      xmlns:views="clr-namespace:Eshop.Mobile.Views"
                       xmlns:vm="clr-namespace:Eshop.Mobile.ViewModels"
                       Title="ProductDetailsPageT"
                       x:DataType="vm:ProductDetailVMt"
@@ -16,30 +19,69 @@
         <ResourceDictionary>
 
             <converters:TakeFirstItem x:Key="FirstItem" />
+            <converters:CountGreaterThen1ToBool x:Key="CountGreater1" />
+            <converters:WishStateToImage x:Key="WishImage" />
 
-            <DataTemplate x:Key="ImageCarousel" x:DataType="models:Product">
-                <CarouselView ItemsSource="{Binding Images}">
-                    <CarouselView.ItemTemplate>
-                        <DataTemplate>
-                            <Image Aspect="AspectFill" Source="{Binding .}" />
-                        </DataTemplate>
-                    </CarouselView.ItemTemplate>
-                </CarouselView>
+            <Style x:Key="HeartButton" TargetType="Button">
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding WishImage}"
+                                 TargetType="Button"
+                                 Value="HeartS">
+                        <Setter Property="ImageSource" Value="{StaticResource HeartSIcon}" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding WishImage}"
+                                 TargetType="Button"
+                                 Value="HeartR">
+                        <Setter Property="ImageSource" Value="{StaticResource HeartRIcon}" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
 
-            </DataTemplate>
+            <ControlTemplate x:Key="ImageCarousel" x:DataType="vm:ProductDetailVMt">
+                <Grid RowDefinitions="*, auto" RowSpacing="5">
+                    <CarouselView BindingContext="{TemplateBinding BindingContext}"
+                                  IndicatorView="{x:Reference Indicator}"
+                                  ItemsSource="{Binding Product.Images}">
+                        <CarouselView.ItemTemplate>
+                            <DataTemplate>
+                                <Image HeightRequest="300"
+                                       Aspect="AspectFill"
+                                       Source="{Binding .}" />
+                            </DataTemplate>
+                        </CarouselView.ItemTemplate>
+                    </CarouselView>
+                    <IndicatorView x:Name="Indicator"
+                                   Grid.Row="1"
+                                   HorizontalOptions="Center" />
+                </Grid>
+            </ControlTemplate>
 
-            <DataTemplate x:Key="SingleImage" x:DataType="models:Product">
-                <Image Aspect="AspectFill" Source="{Binding Images, Converter={StaticResource FirstItem}}" />
-            </DataTemplate>
+            <ControlTemplate x:Key="SingleImage" x:DataType="vm:ProductDetailVMt">
+                <Image Aspect="AspectFit"
+                       BindingContext="{TemplateBinding BindingContext}"
+                       Source="{Binding Product.Images, Converter={StaticResource FirstItem}}" />
+            </ControlTemplate>
 
             <LinearGradientBrush x:Key="TopBarGradient" StartPoint="0,0" EndPoint="1,1">
                 <GradientStop Offset="0.1" Color="#4D63F5" />
                 <GradientStop Offset="1.0" Color="#8441AA" />
             </LinearGradientBrush>
 
-            <selectors:ProductsDataTemplateSelector x:Key="ProductSelector"
-                                                    MultipleImages="{StaticResource ImageCarousel}"
-                                                    SingleImage="{StaticResource SingleImage}" />
+            <Style x:Key="Selector" TargetType="ContentView">
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding SingleImage}"
+                                 TargetType="ContentView"
+                                 Value="True">
+                        <Setter Property="ControlTemplate" Value="{StaticResource SingleImage}" />
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding SingleImage}"
+                                 TargetType="ContentView"
+                                 Value="False">
+                        <Setter Property="ControlTemplate" Value="{StaticResource ImageCarousel}" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
         </ResourceDictionary>
     </page:ContentPageBase.Resources>
 
@@ -54,15 +96,15 @@
 
 
         <Grid Margin="0,10,0,0"
-              ColumnDefinitions="auto, *, auto"
-              RowDefinitions="auto, *">
+              BackgroundColor="Transparent"
+              ColumnDefinitions="*, 3*, auto"
+              RowDefinitions="auto, *, auto">
 
             <!--#region Header-->
 
-            <Button Padding="20"
-                    HorizontalOptions="Center"
+            <!--<Button HorizontalOptions="Center"
                     ImageSource="{x:StaticResource FindIcon}"
-                    StyleClass="TextButton" />
+                    StyleClass="TextButton" />-->
 
             <Label Grid.Column="1"
                    HorizontalOptions="CenterAndExpand"
@@ -75,17 +117,19 @@
                    TextColor="White" />
 
             <Button Grid.Column="2"
-                    Padding="20"
-                    ImageSource="{x:StaticResource BellIcon}"
+                    Style="{StaticResource HeartButton}"
+                    Command="{Binding ToggleWishStatusCommand}"
                     StyleClass="TextButton" />
             <!--#endregion-->
 
-            <ScrollView Grid.Row="1" Grid.ColumnSpan="3">
-                <VerticalStackLayout Padding="0,10,0,0">
-                    <ContentView HeightRequest="300"
-                                 BindingContext="{Binding Product}"
-                                 ControlTemplate="{StaticResource ProductSelector}" />
 
+            <ScrollView Grid.Row="1"
+                        Grid.RowSpan="2"
+                        Grid.ColumnSpan="3"
+                        Margin="10,10,10,0"
+                        VerticalScrollBarVisibility="Never">
+                <VerticalStackLayout Margin="0,0,0,40">
+                    <ContentView Style="{StaticResource Selector}" HeightRequest="300" />
                     <VerticalStackLayout Margin="20" Spacing="20">
                         <Label HorizontalOptions="Center"
                                FontFamily="Racama"
@@ -101,6 +145,61 @@
                     </VerticalStackLayout>
                 </VerticalStackLayout>
             </ScrollView>
+
+            <StackLayout x:Name="ButtonsStateContainer"
+                         Grid.Row="2"
+                         Grid.ColumnSpan="3"
+                         Margin="5"
+                         mct:StateContainer.CurrentState="{Binding Product.InCart}">
+                <mct:StateContainer.StateViews>
+
+                    <Button mct:StateView.StateKey="False"
+                            Command="{Binding AddToCartCommand}"
+                            FontFamily="Racama"
+                            FontSize="20"
+                            Text="Добавить в корзину" />
+
+                    <Grid Margin="70,0,70,0"
+                          mct:StateView.StateKey="True"
+                          BackgroundColor="Transparent"
+                          ColumnDefinitions="*,*,*"
+                          ColumnSpacing="10">
+                        <!--<Button Command="{Binding ToCartCommand}" Text="В корзине" />-->
+                        <Border Grid.ColumnSpan="3" Background="{StaticResource TopBarGradient}">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="10" />
+                            </Border.StrokeShape>
+                        </Border>
+                        <Button BackgroundColor="Transparent"
+                                Command="{Binding QuantityChangeCommand}"
+                                CommandParameter="-1">
+                            <Button.ImageSource>
+                                <FontImageSource FontFamily="FASolid"
+                                                 Glyph="{x:Static fa:Solid.Minus}"
+                                                 Size="18" />
+                            </Button.ImageSource>
+                        </Button>
+                        <Label Grid.Column="1"
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center"
+                               FontFamily="Racama"
+                               FontSize="20"
+                               Text="{Binding Product.Quantity}"
+                               TextColor="Orange" />
+                        <Button Grid.Column="3"
+                                BackgroundColor="Transparent"
+                                Command="{Binding QuantityChangeCommand}"
+                                CommandParameter="1">
+                            <Button.ImageSource>
+                                <FontImageSource FontFamily="FASolid"
+                                                 Glyph="{x:Static fa:Solid.Plus}"
+                                                 Size="18" />
+                            </Button.ImageSource>
+                        </Button>
+                    </Grid>
+
+                </mct:StateContainer.StateViews>
+            </StackLayout>
 
         </Grid>
     </Grid>

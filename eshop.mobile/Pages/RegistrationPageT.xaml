@@ -2,10 +2,91 @@
 <ContentPage x:Class="Eshop.Mobile.Pages.RegistrationPageT"
              xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             Title="RegistrationPage">
-    <VerticalStackLayout>
-        <Label HorizontalOptions="Center"
-               VerticalOptions="Center"
-               Text="Welcome to .NET MAUI!" />
-    </VerticalStackLayout>
+             xmlns:input="clr-namespace:InputKit.Shared.Controls;assembly=InputKit.Maui"
+             xmlns:page="clr-namespace:Eshop.Mobile.Pages.Base"
+             xmlns:validation="clr-namespace:InputKit.Shared.Validations;assembly=InputKit.Maui"
+             xmlns:vm="clr-namespace:Eshop.Mobile.ViewModels"
+             Title="RegistrationPage"
+             x:DataType="vm:RegistrationVMt"
+             Shell.NavBarIsVisible="False"
+             Shell.TabBarIsVisible="False">
+
+    <Grid>
+
+        <Image x:Name="back"
+               Aspect="Center"
+               Opacity="0.1"
+               Scale="1.2"
+               Source="background.jpg" />
+
+        <VerticalStackLayout HorizontalOptions="Center"
+                             VerticalOptions="Center"
+                             Spacing="20">
+
+            <input:FormView x:Name="Form"
+                            Spacing="5"
+                            SubmitCommand="{Binding RegisterCommand}">
+
+                <input:AdvancedEntry x:Name="PhoneEntry"
+                                     Title="Телефон"
+                                     WidthRequest="250"
+                                     FontFamily="Racama"
+                                     MaxLength="11"
+                                     Text="{Binding Phone}">
+                    <input:AdvancedEntry.Validations>
+                        <validation:RequiredValidation Message="Данное поле обязательное" />
+                        <validation:DigitsOnlyValidation Message="Разрешены только цифры" />
+                        <validation:MinLengthValidation Message="Номер должен быть из 11 символов" MinLength="11" />
+                    </input:AdvancedEntry.Validations>
+                </input:AdvancedEntry>
+
+                <input:AdvancedEntry x:Name="NameEntry"
+                                     Title="Имя"
+                                     FontFamily="Racama"
+                                     Text="{Binding Name}">
+                    <input:AdvancedEntry.Validations>
+                        <validation:RequiredValidation Message="Данное поле обязательное" />
+                    </input:AdvancedEntry.Validations>
+                </input:AdvancedEntry>
+
+                <input:AdvancedEntry x:Name="MailEntry"
+                                     Title="Email"
+                                     FontFamily="Racama"
+                                     Text="{Binding Email}">
+                    <input:AdvancedEntry.Validations>
+                        <validation:RequiredValidation Message="Данное поле обязательное" />
+                    </input:AdvancedEntry.Validations>
+                </input:AdvancedEntry>
+
+                <input:AdvancedEntry x:Name="PasswordEntry"
+                                     Title="Пароль"
+                                     FontFamily="Racama"
+                                     IsPassword="True"
+                                     Text="{Binding Password}">
+                    <input:AdvancedEntry.Validations>
+                        <validation:RequiredValidation Message="Данное поле обязательное" />
+                    </input:AdvancedEntry.Validations>
+                </input:AdvancedEntry>
+
+
+                <input:AdvancedEntry x:Name="Password2Entry"
+                                     Title="Пароль еще раз"
+                                     FontFamily="Racama"
+                                     IsPassword="True"
+                                     Text="{Binding OneMorePassword}">
+                    <input:AdvancedEntry.Validations>
+                        <validation:RequiredValidation Message="Данное поле обязательное" />
+                    </input:AdvancedEntry.Validations>
+                </input:AdvancedEntry>
+
+                <Button Margin="0,10,0,0"
+                        input:FormView.IsSubmitButton="True"
+                        FontFamily="Racama"
+                        FontSize="16"
+                        IsEnabled="{Binding IsReady}"
+                        Text="Зарегистрироваться" />
+
+            </input:FormView>
+        </VerticalStackLayout>
+    </Grid>
 </ContentPage>

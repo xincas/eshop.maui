@@ -6,6 +6,7 @@ public interface IWishService
 {
     Task<IEnumerable<Product>> GetWishesAsync();
     Task AddProductToWishesAsync(Product product);
-    Task DeleteProductToWishesAsync(Product product);
+    Task DeleteProductFromWishesAsync(Product product);
     Task<IEnumerable<Product>> GetWishesAsync(Func<ProductDb, bool> predicate);
+    Task<bool> IsWishAsync(Product product);
 }

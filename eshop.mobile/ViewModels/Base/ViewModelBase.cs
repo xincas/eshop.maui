@@ -10,8 +10,7 @@ public abstract partial class ViewModelBase : ObservableObject, IViewModelBase
 
     public bool IsBusy => Interlocked.Read(ref _isBusy) > 0;
 
-    [ObservableProperty]
-    private bool _isInitialized;
+    [ObservableProperty] private bool _isInitialized;
 
     public INavigationService NavigationService { get; }
 

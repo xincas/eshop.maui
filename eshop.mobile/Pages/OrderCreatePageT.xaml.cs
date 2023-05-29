@@ -3,9 +3,9 @@ using Eshop.Mobile.ViewModels;
 
 namespace Eshop.Mobile.Pages;
 
-public partial class CatalogPage : ContentPageBase
+public partial class OrderCreatePageT : ContentPageBase
 {
-    public CatalogPage(CatalogVM vm)
+    public OrderCreatePageT(OrderCreateVMt vm)
     {
         InitializeComponent();
         BindingContext = vm;

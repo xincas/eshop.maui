@@ -16,7 +16,7 @@ public class SettingsService : ISettingsService
 
     private readonly string AccessTokenDefault = string.Empty;
     private readonly string RefreshTokenDefault = string.Empty;
-    private readonly string IdClientDefault = string.Empty;
+    private readonly long IdClientDefault = -1;
     private const double FakeLatitudeDefault = 59.986751d;
     private const double FakeLongitudeDefault = 30.300527d;
     private const bool AllowGpsLocationDefault = false;
@@ -34,7 +34,7 @@ public class SettingsService : ISettingsService
     //    get => Preferences.Get(RefreshToken, RefreshTokenDefault); 
     //    set => Preferences.Set(RefreshToken, value);
     //}
-    public string ClientId
+    public long ClientId
     {
         get => Preferences.Get(IdClient, IdClientDefault);
         set => Preferences.Set(IdClient, value);

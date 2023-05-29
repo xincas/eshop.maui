@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Eshop.Mobile.Models;
+using Eshop.Mobile.Pages;
 using Eshop.Mobile.Services.Catalog;
 using Eshop.Mobile.Services.Navigation;
 using Eshop.Mobile.ViewModels.Base;
@@ -27,30 +28,66 @@ public partial class CatalogVM : ViewModelBase
         _nodes = new ObservableCollection<Node>();
         _searchResults = new ObservableCollection<SearhResult>();
 
-        State = "Default";
+        State = CatalogState.Default;
     }
 
     public override async Task InitializeAsync()
     {
-        //await IsBusyFor(async () =>
-        //{
         _nodes.Clear();
 
         var categories = await _catalogService.GetCategoriesAsync();
-        //var subCategories = await _catalogService.GetSubCategoriesAsync();
 
         foreach (var category in categories)
         {
-            //var subs = subCategories.Where(it => it.Categories.Contains(category.Id));
             var node = Node.FromCategory(category, category.SubCategories);
             _nodes.Add(node);
         }
-
-        //});
     }
 
     [RelayCommand]
-    public async void PerformSearch(string name)
+    private async void SearchNavigation(SearhResult searhResult)
+    {
+        if (searhResult.Type == CategoryType.Category)
+        {
+            var category = await _catalogService.GetCategoryByIdAsync(searhResult.Id);
+            await NavigationService.NavigateToAsync(nameof(CategoryPageT), new Dictionary<string, object>()
+            {
+                { "category", category }
+            });
+        }
+        else
+        {
+            var subCategory = await _catalogService.GetSubCategoryByIdAsync(searhResult.Id);
+            await NavigationService.NavigateToAsync(nameof(CategoryPageT), new Dictionary<string, object>()
+            {
+                { "subcategory", subCategory }
+            });
+        }
+    }
+
+    [RelayCommand]
+    private async void DefaultNavigation(Node node)
+    {
+        if (node.Type == CategoryType.Category)
+        {
+            var category = await _catalogService.GetCategoryByIdAsync(node.Id);
+            await NavigationService.NavigateToAsync(nameof(CategoryPageT), new Dictionary<string, object>()
+            {
+                { "category", category }
+            });
+        }
+        else
+        {
+            var subCategory = await _catalogService.GetSubCategoryByIdAsync(node.Id);
+            await NavigationService.NavigateToAsync(nameof(CategoryPageT), new Dictionary<string, object>()
+            {
+                { "subcategory", subCategory }
+            });
+        }
+    }
+
+    [RelayCommand]
+    private async void PerformSearch(string name)
     {
         if (IsBusy || string.IsNullOrEmpty(name)) return;
 
@@ -62,27 +99,28 @@ public partial class CatalogVM : ViewModelBase
             var subCategories = await _catalogService.FindSubCategoriesByNameAsync(name);
 
             foreach (var category in categories)
-            {
-                _searchResults.Add(new SearhResult(category.Title, category.Id, SearhResult.CategoryType.Category));
-            }
+                _searchResults.Add(new SearhResult(category.Title, category.Id, CategoryType.Category));
 
             foreach (var subCategory in subCategories)
-            {
-                _searchResults.Add(new SearhResult(subCategory.Title, subCategory.Id,
-                    SearhResult.CategoryType.SubCategory));
-            }
+                _searchResults.Add(new SearhResult(subCategory.Title, subCategory.Id, CategoryType.SubCategory));
         });
     }
 
     [RelayCommand]
-    public void StartSearching() => State = "Searching";
+    private void StartSearching() => State = CatalogState.Searching;
 
     [RelayCommand]
-    public void EndSearching()
+    private void EndSearching()
     {
         _searchResults.Clear();
-        State = "Default";
+        State = CatalogState.Default;
     }
+}
+
+public enum CategoryType
+{
+    Category = 0,
+    SubCategory
 }
 
 public class SearhResult
@@ -101,12 +139,6 @@ public class SearhResult
     public string Title { get; set; }
     public long Id { get; set; }
     public CategoryType Type { get; set; }
-
-    public enum CategoryType
-    {
-        Category = 0,
-        SubCategory
-    }
 }
 
 public class Node
@@ -122,16 +154,27 @@ public class Node
 
     public virtual string Name { get; set; }
     public virtual IList<Node> Children { get; set; } = new ObservableCollection<Node>();
+    public virtual bool IsLeaf { get; set; }
+    public virtual bool IsExpanded { get; set; }
+
+    public CategoryType Type { get; set; }
+    public long Id { get; set; }
 
     static public Node FromCategory(Category category, IEnumerable<SubCategory> subCategories)
     {
-        var node = new Node(category.Title);
+        var node = new Node(category.Title)
+            { Type = CategoryType.Category, Id = category.Id, IsLeaf = false, IsExpanded = true };
 
         foreach (var subCategory in subCategories)
-        {
-            node.Children.Add(new Node(subCategory.Title));
-        }
+            node.Children.Add(new Node(subCategory.Title)
+                { Type = CategoryType.SubCategory, Id = subCategory.Id, IsLeaf = true, IsExpanded = false });
 
         return node;
     }
+}
+
+public static class CatalogState
+{
+    public const string Default = nameof(Default);
+    public const string Searching = nameof(Searching);
 }

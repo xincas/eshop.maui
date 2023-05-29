@@ -11,17 +11,31 @@ namespace Eshop.Mobile.Shims
     {
         public static IEnumerable<Product> Products => new List<Product>()
         {
-            new Product(-1, String.Empty, String.Empty, false, false, String.Empty, 0, 0, new List<AttributeList>(), new List<Review>(), new List<ImageSource>()),
-            new Product(-1, String.Empty, String.Empty, false, false, String.Empty, 0, 0, new List<AttributeList>(), new List<Review>(), new List<ImageSource>()),
-            new Product(-1, String.Empty, String.Empty, false, false, String.Empty, 0, 0, new List<AttributeList>(), new List<Review>(), new List<ImageSource>()),
-            new Product(-1, String.Empty, String.Empty, false, false, String.Empty, 0, 0, new List<AttributeList>(), new List<Review>(), new List<ImageSource>()),
-            new Product(-1, String.Empty, String.Empty, false, false, String.Empty, 0, 0, new List<AttributeList>(), new List<Review>(), new List<ImageSource>()),
-            new Product(-1, String.Empty, String.Empty, false, false, String.Empty, 0, 0, new List<AttributeList>(), new List<Review>(), new List<ImageSource>()),
-            new Product(-1, String.Empty, String.Empty, false, false, String.Empty, 0, 0, new List<AttributeList>(), new List<Review>(), new List<ImageSource>()),
-            new Product(-1, String.Empty, String.Empty, false, false, String.Empty, 0, 0, new List<AttributeList>(), new List<Review>(), new List<ImageSource>()),
-            new Product(-1, String.Empty, String.Empty, false, false, String.Empty, 0, 0, new List<AttributeList>(), new List<Review>(), new List<ImageSource>()),
-            new Product(-1, String.Empty, String.Empty, false, false, String.Empty, 0, 0, new List<AttributeList>(), new List<Review>(), new List<ImageSource>()),
-            new Product(-1, String.Empty, String.Empty, false, false, String.Empty, 0, 0, new List<AttributeList>(), new List<Review>(), new List<ImageSource>()),
+            new Product(-1, String.Empty, String.Empty, false, false, String.Empty, 0, 0, new List<AttributeList>(),
+                new List<Review>(), new List<ImageSource>()),
+            new Product(-1, String.Empty, String.Empty, false, false, String.Empty, 0, 0, new List<AttributeList>(),
+                new List<Review>(), new List<ImageSource>()),
+            new Product(-1, String.Empty, String.Empty, false, false, String.Empty, 0, 0, new List<AttributeList>(),
+                new List<Review>(), new List<ImageSource>()),
+            new Product(-1, String.Empty, String.Empty, false, false, String.Empty, 0, 0, new List<AttributeList>(),
+                new List<Review>(), new List<ImageSource>()),
+            new Product(-1, String.Empty, String.Empty, false, false, String.Empty, 0, 0, new List<AttributeList>(),
+                new List<Review>(), new List<ImageSource>()),
+            new Product(-1, String.Empty, String.Empty, false, false, String.Empty, 0, 0, new List<AttributeList>(),
+                new List<Review>(), new List<ImageSource>()),
+            new Product(-1, String.Empty, String.Empty, false, false, String.Empty, 0, 0, new List<AttributeList>(),
+                new List<Review>(), new List<ImageSource>()),
+            new Product(-1, String.Empty, String.Empty, false, false, String.Empty, 0, 0, new List<AttributeList>(),
+                new List<Review>(), new List<ImageSource>()),
+            new Product(-1, String.Empty, String.Empty, false, false, String.Empty, 0, 0, new List<AttributeList>(),
+                new List<Review>(), new List<ImageSource>()),
+            new Product(-1, String.Empty, String.Empty, false, false, String.Empty, 0, 0, new List<AttributeList>(),
+                new List<Review>(), new List<ImageSource>()),
+            new Product(-1, String.Empty, String.Empty, false, false, String.Empty, 0, 0, new List<AttributeList>(),
+                new List<Review>(), new List<ImageSource>()),
         };
+
+        public static Product Product => new Product(-1, String.Empty, String.Empty, false, false, String.Empty, 0, 0,
+            new List<AttributeList>(), new List<Review>(), new List<ImageSource>());
     }
 }
