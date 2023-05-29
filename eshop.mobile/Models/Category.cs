@@ -5,4 +5,4 @@ public record Category(
     string Title,
     string ImageUrl,
     IEnumerable<long> Products,
-    IEnumerable<SubCategory> SubCategories);
+    IEnumerable<SubCategory> SubCategories) : ICategory;

@@ -1,9 +1,7 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿namespace Eshop.Mobile.Models;
 
-namespace Eshop.Mobile.Models;
-
-[ObservableObject]
 public partial record Address(
+    long? Id,
     string Street,
     string Building,
     string Apartment,
@@ -14,14 +12,16 @@ public partial record Address(
     long UserId
 )
 {
-    public Address() : this(string.Empty,
-        string.Empty,
-        string.Empty,
-        string.Empty,
-        string.Empty,
-        string.Empty,
-        string.Empty,
-        -1)
+    public Address(string fulladdress) : this(null, "", "", "", "", "", "", fulladdress, -1)
     {
     }
+
+    public static Address Empty => new Address(-1, string.Empty,
+        string.Empty,
+        string.Empty,
+        string.Empty,
+        string.Empty,
+        string.Empty,
+        string.Empty,
+        -1);
 };
