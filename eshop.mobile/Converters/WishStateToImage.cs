@@ -2,17 +2,16 @@
 
 namespace Eshop.Mobile.Converters;
 
-public class TakeFirstItem : IValueConverter
+public class WishStateToImage : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         ArgumentNullException.ThrowIfNull(value);
+        if (value is not bool val) throw new ArgumentException("value");
 
-        var s = (IEnumerable<object>)value;
-
-        if (!s.Any()) return null;
-
-        return s.First();
+        return val
+            ? ImageSource.FromResource("HeartSIcon", typeof(App))
+            : ImageSource.FromResource("HeartRIcon", typeof(App));
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
