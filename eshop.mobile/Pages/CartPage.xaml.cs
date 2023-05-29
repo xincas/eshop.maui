@@ -1,9 +1,22 @@
+using Eshop.Mobile.Pages.Base;
+using Eshop.Mobile.ViewModels;
+
 namespace Eshop.Mobile.Pages;
 
-public partial class CartPage : ContentPage
+public partial class CartPage : ContentPageBase
 {
-	public CartPage()
-	{
-		InitializeComponent();
-	}
+    private CartVM ViewModel => (CartVM)BindingContext;
+
+    public CartPage(CartVM vm)
+    {
+        InitializeComponent();
+        BindingContext = vm;
+    }
+
+    protected override void OnNavigatedTo(NavigatedToEventArgs args)
+    {
+        base.OnNavigatedTo(args);
+        if (ViewModel.IsInitialized)
+            ViewModel.IsRefreshing = true;
+    }
 }

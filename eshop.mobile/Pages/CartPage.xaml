@@ -1,12 +1,200 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="Eshop.Mobile.Pages.CartPage">
-             <!--Title="CartPage">-->
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to cart page"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
-</ContentPage>
+<page:ContentPageBase x:Class="Eshop.Mobile.Pages.CartPage"
+                      xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                      xmlns:converters="clr-namespace:Eshop.Mobile.Converters"
+                      xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+                      xmlns:mct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+                      xmlns:model="clr-namespace:Eshop.Mobile.Models"
+                      xmlns:page="clr-namespace:Eshop.Mobile.Pages.Base"
+                      xmlns:selectors="clr-namespace:Eshop.Mobile.Views.DataTemplateSelectors"
+                      xmlns:sk="clr-namespace:Maui.Skeleton;assembly=Maui.Skeleton"
+                      xmlns:uranium="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
+                      xmlns:vm="clr-namespace:Eshop.Mobile.ViewModels"
+                      x:DataType="vm:CartVM"
+                      Shell.NavBarIsVisible="False">
+    <!--  Title="CartPage">  -->
+
+    <page:ContentPageBase.Resources>
+        <ResourceDictionary>
+
+            <converters:TakeFirstItem x:Key="FirstItem" />
+            <mct:InvertedBoolConverter x:Key="Invert" />
+
+            <DataTemplate x:Key="CartItem" x:DataType="model:Product">
+                <Frame Padding="0"
+                       BackgroundColor="AliceBlue"
+                       CornerRadius="20">
+                    <Frame.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:CartVM}}, Path=NavigateToProductDetailCommand}" CommandParameter="{Binding .}" />
+                    </Frame.GestureRecognizers>
+                    <Grid ColumnDefinitions="auto, *, auto" ColumnSpacing="5">
+                        <Border BackgroundColor="Transparent" StrokeShape="RoundRectangle 20,0,20,0">
+                            <Image HeightRequest="125"
+                                   Aspect="AspectFill"
+                                   Source="{Binding Images, Converter={StaticResource FirstItem}}" />
+                        </Border>
+
+                        <VerticalStackLayout Grid.Column="1"
+                                             Margin="3,10,0,10"
+                                             VerticalOptions="CenterAndExpand"
+                                             Spacing="15">
+                            <Label FontFamily="Racama"
+                                   FontSize="16"
+                                   Text="{Binding Name}" />
+                            <Label FontFamily="Racama"
+                                   FontSize="15"
+                                   LineBreakMode="TailTruncation"
+                                   Text="{Binding Description}" />
+                            <Label FontFamily="Racama"
+                                   FontSize="17"
+                                   Text="{Binding TotalPrice, StringFormat='{0} руб.'}" />
+                        </VerticalStackLayout>
+                        <Grid Grid.Column="2"
+                              ColumnDefinitions="*,*"
+                              RowDefinitions="*,*,*">
+                            <uranium:StatefulContentView WidthRequest="30"
+                                                         CommandParameter="{Binding .}"
+                                                         TappedCommand="{Binding Source={RelativeSource AncestorType={x:Type vm:CartVM}}, Path=IncreaseQuantityCommand}">
+                                <Image Scale="0.7" Source="{StaticResource PlusIcon}">
+                                    <Image.Behaviors>
+                                        <mct:IconTintColorBehavior TintColor="Green" />
+                                    </Image.Behaviors>
+                                </Image>
+                            </uranium:StatefulContentView>
+                            <Label Grid.Row="1"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center"
+                                   FontFamily="Racama"
+                                   FontSize="22"
+                                   Text="{Binding Quantity}" />
+                            <uranium:StatefulContentView Grid.Row="2"
+                                                         WidthRequest="30"
+                                                         CommandParameter="{Binding .}"
+                                                         TappedCommand="{Binding Source={RelativeSource AncestorType={x:Type vm:CartVM}}, Path=DecreaseQuantityCommand}">
+                                <Image Scale="0.7" Source="{StaticResource MinusIcon}">
+                                    <Image.Behaviors>
+                                        <mct:IconTintColorBehavior TintColor="Red" />
+                                    </Image.Behaviors>
+                                </Image>
+                            </uranium:StatefulContentView>
+
+                            <uranium:StatefulContentView Grid.RowSpan="3"
+                                                         Grid.Column="1"
+                                                         WidthRequest="30"
+                                                         Margin="5"
+                                                         CommandParameter="{Binding .}"
+                                                         TappedCommand="{Binding Source={RelativeSource AncestorType={x:Type vm:CartVM}}, Path=DeleteCartItemCommand}">
+                                <Image Scale="0.7" Source="{StaticResource TrashIcon}">
+                                    <Image.Behaviors>
+                                        <mct:IconTintColorBehavior TintColor="Red" />
+                                    </Image.Behaviors>
+                                </Image>
+                            </uranium:StatefulContentView>
+                        </Grid>
+                    </Grid>
+                </Frame>
+
+            </DataTemplate>
+
+            <LinearGradientBrush x:Key="TopBarGradient" StartPoint="0,0" EndPoint="1,1">
+                <GradientStop Offset="0.1" Color="#4D63F5" />
+                <GradientStop Offset="1.0" Color="#8441AA" />
+            </LinearGradientBrush>
+
+            <LinearItemsLayout x:Key="OneItemRow"
+                               ItemSpacing="10"
+                               Orientation="Vertical" />
+
+        </ResourceDictionary>
+    </page:ContentPageBase.Resources>
+
+    <Grid>
+        <RoundRectangle HeightRequest="150"
+                        Margin="-5,0,-5,0"
+                        HorizontalOptions="FillAndExpand"
+                        VerticalOptions="Start"
+                        CornerRadius="25"
+                        Fill="{StaticResource TopBarGradient}"
+                        TranslationY="-85" />
+
+        <Grid Margin="0,10,0,0"
+              ColumnDefinitions="auto, *, auto"
+              RowDefinitions="auto, 1*, auto">
+
+            <!--#region Header-->
+
+            <!--<Button Padding="20"
+                    HorizontalOptions="Center"
+                    ImageSource="{x:StaticResource FindIcon}"
+                    StyleClass="TextButton" />-->
+
+            <Label Grid.ColumnSpan="3"
+                   Padding="9"
+                   HorizontalOptions="CenterAndExpand"
+                   VerticalOptions="CenterAndExpand"
+                   HorizontalTextAlignment="Center"
+                   VerticalTextAlignment="End"
+                   FontFamily="Racama"
+                   FontSize="22"
+                   Text="EShop"
+                   TextColor="White" />
+
+            <!--<Button Grid.Column="2"
+                    Padding="20"
+                    ImageSource="{x:StaticResource BellIcon}"
+                    StyleClass="TextButton" />-->
+            <!--#endregion-->
+
+            <RefreshView Grid.Row="1"
+                         Grid.RowSpan="2"
+                         Grid.ColumnSpan="3"
+                         Margin="10,10,10,60"
+                         Command="{Binding RefreshCartCommand}"
+                         IsRefreshing="{Binding IsRefreshing}"
+                         IsVisible="{Binding IsEmpty, Converter={StaticResource Invert}}">
+                <ScrollView VerticalScrollBarVisibility="Never">
+                    <VerticalStackLayout>
+                        <CollectionView Margin="0,0,0,50"
+                                        ItemTemplate="{StaticResource CartItem}"
+                                        ItemsLayout="{StaticResource OneItemRow}"
+                                        ItemsSource="{Binding Products}" />
+
+                    </VerticalStackLayout>
+                </ScrollView>
+            </RefreshView>
+
+
+            <Border Grid.Row="2"
+                    Grid.ColumnSpan="3"
+                    Margin="10,10,10,60"
+                    BackgroundColor="AliceBlue"
+                    IsVisible="{Binding IsEmpty, Converter={StaticResource Invert}}"
+                    StrokeShape="RoundRectangle 20">
+                <Grid ColumnDefinitions="*,1.5*">
+                    <Label HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           FontFamily="Racama"
+                           FontSize="18"
+                           Text="{Binding TotalCartPrice, StringFormat='{0} руб.'}" />
+                    <Button Grid.Column="1"
+                            Command="{Binding NavigateToOrderCreateCommand}"
+                            FontFamily="Racama"
+                            FontSize="15"
+                            Text="Перейти к оформлению" />
+                </Grid>
+            </Border>
+
+            <Label Grid.Row="1"
+                   Grid.RowSpan="2"
+                   Grid.ColumnSpan="3"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   FontFamily="Racama"
+                   FontSize="30"
+                   IsVisible="{Binding IsEmpty}"
+                   Text="Здесь пусто!" />
+        </Grid>
+
+    </Grid>
+</page:ContentPageBase>
