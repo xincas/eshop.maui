@@ -181,11 +181,11 @@ public class AuthService : IAuthService
         }
     }
 
-    public async Task NavigateToLoginPageAsync()
+    public async Task NavigateToLoginPageAsync(bool showPopup)
     {
         _settings.LogOut();
 
-        await _dialog.ShowAlertAsync("Пожалуйста авторизируйтесь снова.", "Авторизация", "Ок!");
+        if (showPopup) await _dialog.ShowAlertAsync("Пожалуйста авторизируйтесь снова.", "Авторизация", "Ок!");
 
         await _navigation.NavigateToAsync($"//{nameof(LoginPageT)}");
     }

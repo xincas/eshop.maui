@@ -13,7 +13,7 @@ public interface IAuthService
     Task<string> GetAccessTokenAsync();
     Task<bool> LoginAsync(UserCredentials user);
     Task<AuthResponse> RegisterNewAcc(RegisterModel user);
-    Task NavigateToLoginPageAsync();
+    Task NavigateToLoginPageAsync(bool showPopup = false);
     void Logout();
 }
 
